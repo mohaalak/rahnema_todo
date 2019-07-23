@@ -1,6 +1,9 @@
-import * as Rahnemaak from './rahnemaak';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+
 import { TodoItemComponent } from './TodoItem';
-// @jsx Rahnemaak.createElement
+import { OneForm } from './OneForm';
+
 const root = document.getElementById('root');
 function removeChildren() {
   for (const child of root.children) {
@@ -19,30 +22,22 @@ interface TodoState {
   status: TodoStatus;
 }
 
-class TodoApplication {
-  state: TodoState = {
+class TodoApplication extends React.Component {
+  state = {
     todos: [{ text: 'Hamid', checked: true }],
     status: 'all'
   };
-  constructor() {
+  constructor(props) {
+    super(props);
     this.addTodo = this.addTodo.bind(this);
     this.toggleTodo = this.toggleTodo.bind(this);
   }
 
-  setState(state: Partial<TodoState>) {
-    this.state = { ...this.state, ...state };
-
-    renderApp();
-  }
-
   private setStatus(status: TodoStatus) {
-    this.setState({ status });
+    this.setState({ status: status });
   }
 
-  private addTodo(e: any) {
-    e.preventDefault();
-    const todo = e.target.children[0].value;
-
+  private addTodo(todo: string) {
     this.setState({
       todos: [...this.state.todos, { text: todo, checked: false }]
     });
@@ -69,15 +64,6 @@ class TodoApplication {
     this.setState({
       todos: this.state.todos
     });
-  }
-
-  renderForm() {
-    return (
-      <form onSubmit={this.addTodo}>
-        <input />
-        <button>Submit</button>
-      </form>
-    );
   }
 
   renderTodoItem(todo: TodoItem) {
@@ -112,7 +98,7 @@ class TodoApplication {
   render() {
     return (
       <div>
-        {this.renderForm()}
+        <OneForm submit={this.addTodo} />
         {this.renderTodoContainer()}
         {this.renderFooter()}
       </div>
@@ -120,13 +106,8 @@ class TodoApplication {
   }
 }
 
-const todoApp = new TodoApplication();
-
 function renderApp() {
-  const element = todoApp.render();
-  removeChildren();
-
-  Rahnemaak.render(root, element);
+  ReactDOM.render(<TodoApplication />, root);
 }
 
 renderApp();

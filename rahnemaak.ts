@@ -34,9 +34,14 @@ export function render(parentDom: any, element: Element) {
     element.children &&
       element.children.filter(x => x !== null).forEach(x => render(dom, x));
     parentDom.appendChild(dom);
+    return dom;
   } else {
     const type: Component = new element.type(element.props);
-    return render(parentDom, type.render());
+
+    const dom = render(parentDom, type.render());
+    type.__dom = dom;
+
+    return dom;
   }
 }
 
@@ -64,8 +69,20 @@ export function createElement(
 
 export abstract class Component {
   props: any;
+  state: any = {};
+  __dom: HTMLElement;
   constructor(props: any) {
     this.props = props;
   }
+  setState(state: any) {
+    this.state = { ...this.state, ...state };
+    const element = this.render();
+    const parent = this.__dom.parentElement;
+    for (const child of this.__dom.parentElement.children) {
+      this.__dom.parentElement.removeChild(child);
+    }
+    render(parent, element);
+  }
+
   abstract render(): Element;
 }
