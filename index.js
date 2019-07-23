@@ -19,7 +19,7 @@ class TodoApplication {
   setState(state) {
     this.state = { ...this.state, ...state };
     console.log(this.state);
-    render();
+    renderApp();
   }
 
   setStatus(status) {
@@ -138,10 +138,10 @@ class TodoApplication {
 
 const todoApp = new TodoApplication();
 
-function render() {
+function renderApp() {
   const dom = todoApp.render();
   removeChildren();
   root.appendChild(dom);
 }
 
-render();
+renderApp();
